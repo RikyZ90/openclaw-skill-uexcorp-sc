@@ -1,26 +1,30 @@
-# openclaw-skill-uexcorp-sc
+# 🚀 openclaw-skill-uexcorp-sc
 
-⭐ OpenClaw/ShibaClaw skill for Star Citizen trade data via UEXcorp API
+[![OpenClaw Compatible](https://img.shields.io/badge/OpenClaw-Compatible-blue.svg)](#)
+[![ShibaClaw Compatible](https://img.shields.io/badge/ShibaClaw-Compatible-orange.svg)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## What it does
+⭐ An **OpenClaw** / **ShibaClaw** skill to fetch live *Star Citizen* trade data directly from the [UEXcorp](https://uexcorp.space) community database.
 
-Query live Star Citizen trade data powered by the [UEXcorp](https://uexcorp.space) community database:
+## 🛠️ What it does
 
-- 💰 Commodity buy/sell prices by terminal
-- ⛏️ Raw material & mining prices
-- 🛸 Ship/vehicle data and cargo capacity
-- 🪐 Terminals, planets, moons, star systems
-- 🗺️ Best trade route suggestions
+Query live Star Citizen trade data seamlessly using your AI agent:
 
-## Installation
+- 💰 **Commodities:** Buy and sell prices by terminal
+- ⛏️ **Mining:** Raw material & mining prices
+- 🛸 **Vehicles:** Ship/vehicle data and cargo capacity
+- 🪐 **Locations:** Terminals, planets, moons, and star systems
+- 🗺️ **Trading:** Best trade route suggestions based on real-time data
 
-1. Copy the `SKILL.md` file into your OpenClaw/ShibaClaw skills folder:
-   - OpenClaw: `~/.openclaw/skills/uexcorp-sc/SKILL.md`
-   - ShibaClaw: `<workspace>/skills/uexcorp-sc/SKILL.md`
+## 📦 Installation
 
-2. Get your API token at [uexcorp.space/api/apps](https://uexcorp.space/api/apps)
+1. Copy the `SKILL.md` file into your agent's skills folder:
+   - **OpenClaw:** `~/.openclaw/skills/uexcorp-sc/SKILL.md`
+   - **ShibaClaw:** `<workspace>/skills/uexcorp-sc/SKILL.md`
 
-3. Add your token to your config:
+2. Get your free API token at [uexcorp.space/api/apps](https://uexcorp.space/api/apps)
+
+3. Add your token to your configuration file:
 ```json
 {
   "skills": {
@@ -33,20 +37,21 @@ Query live Star Citizen trade data powered by the [UEXcorp](https://uexcorp.spac
 }
 ```
 
-4. Restart your agent session and you're good to go 🚀
+4. Restart your agent session and you're good to go! 🚀
 
-## Example prompts
+## 💬 Example prompts
 
-- *"What's the price of Laranite at Lorville?"*
-- *"Best trade route from ArcCorp with a Cutlass Black?"*
-- *"Where can I sell Titanium for the most credits?"*
-- *"Show me all terminals in the Stanton system"*
+Try asking your agent:
+> *"What's the price of Laranite at Lorville?"*
+> *"Find me the best trade route from ArcCorp using a Cutlass Black."*
+> *"Where can I sell Titanium for the most credits?"*
+> *"Show me all terminals in the Stanton system."*
 
-## Data source
+## 📡 Data source
 
-All data is community-sourced via [UEXcorp API 2.0](https://uexcorp.space/api/documentation/).
-Prices may slightly differ from live in-game values.
+All data is community-sourced via the [UEXcorp API 2.0](https://uexcorp.space/api/documentation/).  
+*Note: Prices and data may slightly differ from live in-game values depending on community updates.*
 
-## License
+## 📄 License
 
-MIT
+[MIT](LICENSE)
