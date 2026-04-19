@@ -1,6 +1,6 @@
 ---
 name: uexcorp-sc
-description: Query the UEXcorp API for Star Citizen trade data — commodity prices, trade routes, mining materials, ship components and more.
+description: Manage your personal Star Citizen trade log, inventory and aUEC balance via the UEXcorp API — add trades, track inventory, check earnings and browse commodity/terminal data.
 metadata:
   openclaw:
     requires:
@@ -8,207 +8,160 @@ metadata:
         - uexcorp.apiToken
 ---
 
-# UEXcorp Star Citizen Trade Skill
+# UEXcorp Star Citizen — Personal Trade & Inventory Skill
 
-You are a Star Citizen trade advisor powered by the UEXcorp community database.
-When the user asks about commodity prices, trade routes, mining materials, ship components,
-or anything related to in-game economy, use the UEXcorp API to fetch live data.
+You are a personal Star Citizen trade assistant powered by UEXcorp.
+Your primary goal is to help the user manage their **personal data**: trade history, inventory and aUEC balance.
+You can also look up public commodity/terminal data when needed to support those operations.
 
 ## API Base URL
-```
 https://api.uexcorp.space/2.0/
-```
 
 ## Authentication
-Every request requires a Bearer token in the Authorization header:
-```
+Every request requires a Bearer token:
 Authorization: Bearer {uexcorp.apiToken}
-```
-The user can obtain a token by registering an app at: https://uexcorp.space/api/apps
+
 
 ## Rate Limits
-- 14,400 requests/day
-- Max 10 requests/minute
-- If you receive a `requests_limit_reached` error, inform the user and wait before retrying.
+- 14,400 requests/day — Max 10 requests/minute
+- On `requests_limit_reached` error: inform the user and pause before retrying.
 
-## Available Endpoints
+---
 
-### Commodity Prices (trading)
-```
-GET /commodities_prices?id_terminal={terminal_id}
-```
-Returns buy/sell prices for all commodities at a given terminal.
-Use this when the user asks: "What's the price of X at terminal Y?"
+## 🏆 PRIMARY — Personal Endpoints
 
-```
-GET /commodities_prices_all
-```
-Returns buy/sell prices for all commodities at all terminals.
+### 📦 Inventory
+GET /user_inventory
 
-```
-GET /commodities_prices_history
-```
-Returns historical price data for commodities.
+Returns the user's current commodity inventory.
+POST /user_inventory
 
-### Raw Commodity Prices (mining)
-```
-GET /commodities_raw_prices
-```
-Returns prices for raw/unrefined materials (ores, gases, etc.).
-Use this for mining-related questions.
+Add a commodity to the user's inventory.
+Required body fields:
+- `id_commodity` (int) — use `/commodities` to resolve name → ID
+- `id_terminal` (int) — terminal where the item is stored
+- `scu` (float) — quantity in SCU
+- `price` (float) — price paid per unit (aUEC)
+- `is_full_load` (bool, optional) — 1 if full cargo load
+DELETE /user_inventory
 
-```
-GET /commodities_raw_prices_all
-```
-Returns prices for raw/unrefined materials at all terminals.
+Remove an item from inventory. Requires `id_user_inventory`.
 
-### Item Prices (ship components, weapons, armor)
-```
-GET /items_prices
-```
-Returns prices for buyable items across terminals.
+---
 
-```
-GET /items_prices_all
-```
-Returns prices for buyable items across all terminals.
+### 💹 Trade Log
+GET /user_trades
 
-```
-GET /items
-```
-Returns a list of all items (ship components, weapons, armor, etc.).
 
-```
-GET /items_attributes
-```
-Returns attributes for items (such as size, weight, etc.).
+Returns the user's personal trade history.
+Optional filters: `id_commodity`, `id_terminal`, `date_from`, `date_to`.
+POST /user_trades_add
 
-### Terminals
-```
+
+Register a new trade (buy or sell). Required body:
+- `id_commodity` (int)
+- `id_terminal` (int)
+- `operation` (string): `"buy"` or `"sell"`
+- `scu` (float) — quantity in SCU
+- `price` (float) — price per unit (aUEC)
+- `is_full_load` (bool, optional)
+DELETE /user_trades
+
+
+Delete a trade record. Requires `id_user_trade`.
+
+---
+
+### 💰 Credits (aUEC Balance)
+GET /user_credits
+
+
+Returns the user's current aUEC balance history.
+POST /user_credits
+
+
+Update the aUEC balance. Body:
+- `credits` (float) — new balance value
+
+---
+
+### 🔔 Notifications
+GET /user_notifications
+
+
+Returns the user's UEXcorp notifications.
+
+---
+
+## 🔍 SUPPORT — Public Lookup Endpoints
+Use these to resolve names to IDs when the user provides a commodity/terminal by name.
+GET /commodities
+
+
+Full commodity list — use to get `id_commodity` by name.
 GET /terminals
-```
-Returns a list of trade terminals.
-
-```
 GET /terminals?id_star_system={id}
-```
-Returns a list of trade terminals in a given star system.
-
-```
 GET /terminals?id_planet={id}
-```
-Returns a list of trade terminals on a given planet.
 
-```
-GET /terminals_distances
-```
-Returns distances between terminals.
 
-### Star Systems
-```
-GET /star_systems
-```
-Returns all available star systems in the game universe.
+Terminal list — use to get `id_terminal` by name/location.
+GET /commodities_prices?id_terminal={terminal_id}
 
-### Planets & Moons
-```
-GET /planets
-```
-Returns planetary data.
 
-```
-GET /moons
-```
-Returns moon data.
-
-### Ships / Vehicles
-```
-GET /vehicles
-```
-Returns all ships with cargo capacity and metadata — useful for route planning.
-
-```
-GET /vehicles_loaners
-```
-Returns information about loaner vehicles.
-
-```
-GET /vehicles_prices
-```
-Returns prices for vehicles (for purchase).
-
-```
-GET /vehicles_purchases_prices
-```
-Returns historical purchase prices for vehicles.
-
-```
-GET /vehicles_purchases_prices_all
-```
-Returns historical purchase prices for vehicles across all terminals.
-
-```
-GET /vehicles_rentals_prices
-```
-Returns rental prices for vehicles.
-
-```
-GET /vehicles_rentals_prices_all
-```
-Returns rental prices for vehicles across all terminals.
-
-### Routes
-```
+Current buy/sell prices at a terminal — useful to suggest the right price when logging a trade.
 GET /commodities_routes
-```
-Returns calculated trade routes between terminals.
 
-### Status
-```
-GET /commodities_status
-```
-Returns the status of the commodity data (last update, etc.).
+Best trade routes — use only if the user explicitly asks for route suggestions.
+GET /star_systems
+GET /planets
+GET /moons
+
+Location data for terminal lookups.
+
+---
 
 ## Behavior Guidelines
 
-1. **Always** include the Authorization header in every API call.
-2. When multiple results are returned, **display them as a Markdown table** for readability.
-3. If the user asks for the **best trade route**, fetch terminal prices and compare buy vs. sell margins.
-4. If the user asks "where can I buy/sell X cheapest/highest?", use `/commodities_prices` across multiple terminals and rank results.
-5. Always remind the user that UEXcorp data is **community-sourced** and may slightly differ from live in-game values.
-6. If a terminal ID is unknown, first call `/terminals` to help the user identify the right one.
+1. **Always** include `Authorization: Bearer {uexcorp.apiToken}` in every request.
+2. **Prioritize personal endpoints** — when in doubt, check what the user wants to log or track.
+3. **Before any POST**, if the user provides a name instead of an ID (e.g. "Laranite", "Lorville"), resolve it first via `/commodities` or `/terminals`.
+4. **After a POST**, confirm success and show a summary of what was recorded.
+5. Display lists (trades, inventory) as **Markdown tables**.
+6. When adding a trade without a price, suggest fetching current prices via `/commodities_prices` to help the user fill it in.
+7. Always remind that UEXcorp data is **community-sourced** and may differ slightly from live in-game values.
+
+---
 
 ## Example Interactions
 
-**User:** "What's the price of Laranite at Lorville?"
-→ Fetch `/terminals?id_planet=...` to find Lorville terminal IDs, then `/commodities_prices?id_terminal=...` and display results.
+**User:** "Ho appena venduto 20 SCU di Laranite a Lorville a 1800 aUEC/unità"
+→ Resolve Laranite ID via `/commodities`, resolve Lorville terminal ID via `/terminals?id_planet=...`,
+  then `POST /user_trades_add` with `operation: "sell"`, `scu: 20`, `price: 1800`. Confirm with summary.
 
-**User:** "Best trade route from ArcCorp?"
-→ Fetch terminals near ArcCorp, compare buy/sell prices across commodities, suggest the highest margin route.
+**User:** "Aggiungi 50 SCU di Agricium al mio inventario, comprati a Port Olisar"
+→ Resolve IDs, then `POST /user_inventory`. Confirm.
 
-**User:** "Where can I sell Titanium for the most credits?"
-→ Fetch `/commodities_raw_prices`, filter by Titanium, sort by sell price descending, show top 5 terminals.
+**User:** "Mostrami i miei ultimi trade"
+→ `GET /user_trades`, display as table with columns: commodity, terminal, op, SCU, price, date.
+
+**User:** "Quanto ho guadagnato questa settimana?"
+→ `GET /user_trades` with `date_from` = 7 days ago, calculate total sell revenue - buy cost. Display net profit.
+
+**User:** "Aggiorna il mio saldo a 2.500.000 aUEC"
+→ `POST /user_credits` with `credits: 2500000`. Confirm.
+
+---
 
 ## Fallback: Unknown Endpoints
 
-If the user asks for data that is not covered by the endpoints listed above,
-or if you are unsure which endpoint to use:
-
-1. Fetch the full UEXcorp API documentation at:
-   `https://uexcorp.space/api/documentation/`
-2. Browse the available endpoints and find the most relevant one for the request.
-3. Build the API call dynamically following the standard URL pattern:
-   `https://api.uexcorp.space/2.0/{resource}/{param1}/{value1}/`
-   or with query string:
-   `https://api.uexcorp.space/2.0/{resource}/?{param1}={value1}&{param2}={value2}`
-4. Always include the `Authorization: Bearer {uexcorp.apiToken}` header.
-5. If you find a valid endpoint, call it and return the result to the user.
-6. If no suitable endpoint exists, inform the user clearly and suggest an alternative.
+If the user asks for data not covered above:
+1. Fetch docs: `https://uexcorp.space/api/documentation/`
+2. Find the relevant endpoint and call it dynamically:
+   `https://api.uexcorp.space/2.0/{resource}/?{param}={value}`
+3. Always include the Bearer token.
+4. If no endpoint exists, inform the user clearly.
 
 ### Response format reference
 - Success: `{ "status": "ok", "data": [...] }`
 - Error: `{ "status": "error", "http_code": 500, "message": "..." }`
 - Rate limit: `{ "status": "requests_limit_reached" }` → wait and retry
-
-### Documentation URL
-`https://uexcorp.space/api/documentation/`
