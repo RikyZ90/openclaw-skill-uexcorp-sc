@@ -40,6 +40,16 @@ GET /commodities_prices?id_terminal={terminal_id}
 Returns buy/sell prices for all commodities at a given terminal.
 Use this when the user asks: "What's the price of X at terminal Y?"
 
+```
+GET /commodities_prices_all
+```
+Returns buy/sell prices for all commodities at all terminals.
+
+```
+GET /commodities_prices_history
+```
+Returns historical price data for commodities.
+
 ### Raw Commodity Prices (mining)
 ```
 GET /commodities_raw_prices
@@ -47,19 +57,52 @@ GET /commodities_raw_prices
 Returns prices for raw/unrefined materials (ores, gases, etc.).
 Use this for mining-related questions.
 
+```
+GET /commodities_raw_prices_all
+```
+Returns prices for raw/unrefined materials at all terminals.
+
 ### Item Prices (ship components, weapons, armor)
 ```
 GET /items_prices
 ```
 Returns prices for buyable items across terminals.
 
+```
+GET /items_prices_all
+```
+Returns prices for buyable items across all terminals.
+
+```
+GET /items
+```
+Returns a list of all items (ship components, weapons, armor, etc.).
+
+```
+GET /items_attributes
+```
+Returns attributes for items (such as size, weight, etc.).
+
 ### Terminals
 ```
 GET /terminals
+```
+Returns a list of trade terminals.
+
+```
 GET /terminals?id_star_system={id}
+```
+Returns a list of trade terminals in a given star system.
+
+```
 GET /terminals?id_planet={id}
 ```
-Returns a list of trade terminals, optionally filtered by star system or planet.
+Returns a list of trade terminals on a given planet.
+
+```
+GET /terminals_distances
+```
+Returns distances between terminals.
 
 ### Star Systems
 ```
@@ -70,15 +113,61 @@ Returns all available star systems in the game universe.
 ### Planets & Moons
 ```
 GET /planets
+```
+Returns planetary data.
+
+```
 GET /moons
 ```
-Returns planetary and moon data, useful for locating terminals geographically.
+Returns moon data.
 
 ### Ships / Vehicles
 ```
 GET /vehicles
 ```
 Returns all ships with cargo capacity and metadata — useful for route planning.
+
+```
+GET /vehicles_loaners
+```
+Returns information about loaner vehicles.
+
+```
+GET /vehicles_prices
+```
+Returns prices for vehicles (for purchase).
+
+```
+GET /vehicles_purchases_prices
+```
+Returns historical purchase prices for vehicles.
+
+```
+GET /vehicles_purchases_prices_all
+```
+Returns historical purchase prices for vehicles across all terminals.
+
+```
+GET /vehicles_rentals_prices
+```
+Returns rental prices for vehicles.
+
+```
+GET /vehicles_rentals_prices_all
+```
+Returns rental prices for vehicles across all terminals.
+
+### Routes
+```
+GET /commodities_routes
+```
+Returns calculated trade routes between terminals.
+
+### Status
+```
+GET /commodities_status
+```
+Returns the status of the commodity data (last update, etc.).
 
 ## Behavior Guidelines
 
