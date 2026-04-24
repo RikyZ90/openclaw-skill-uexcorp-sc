@@ -65,6 +65,50 @@ Authorization: Bearer {uexcorp.apiToken}
 
 ---
 
+## 🧾 UEXcorp Marketplace Listing Notes
+- Marketplace listing creation uses `POST /marketplace_advertise/`.
+- Required headers:
+  - `Authorization: Bearer {uexcorp.apiToken}`
+  - `secret-key: {user secret key}`
+- `secret-key` is distinct from the bearer token. Using the bearer value as `secret-key` returns `user_not_found`.
+- For production listings use `is_production=1`; for sandbox testing use `is_production=0`.
+- The endpoint accepts `image_data` as base64-encoded JPG/PNG up to 10 MB.
+- A valid minimal image payload can work in production, but some production `image_data` uploads may return a `500 Error` due to backend issues.
+- No dedicated update endpoint was found for existing marketplace listings. In practice, the flow is:
+  1. `DELETE /marketplace_listings?id={listing_id}&is_production=1` to remove the old listing.
+  2. `POST /marketplace_advertise/` to recreate the listing with `image_data`.
+- `GET /marketplace_listings?id={listing_id}&is_production=1` returns `false` if the listing does not exist.
+- `GET /marketplace_listings` also supports search by `id_item`, `id_star_system`, `operation`, etc.
+
+### Example listing payload
+```
+{
+  "id_category": 61,
+  "id_item": 2629,
+  "id_star_system": 68,
+  "operation": "sell",
+  "type": "item",
+  "language": "en_US",
+  "unit": "unit",
+  "price": 775000000,
+  "currency": "UEC",
+  "location": "Landing Services - Port Tressler",
+  "title": "Tevarin War Service Marker (Pristine)",
+  "description": "Pristine Tevarin War Service Marker for collectors. Ready pickup in Stanton.",
+  "in_stock": 1,
+  "durability": 100,
+  "availability": "ready_pickup",
+  "source": "looted",
+  "hours_expiration": 168,
+  "is_hidden": 0,
+  "is_production": 1,
+  "image_data": "<base64-jpg-or-png>"
+}
+```
+- If you need to troubleshoot image upload behavior, first verify the payload in sandbox mode (`is_production=0`). Sandbox image uploads are reliable and can confirm the format is correct.
+
+---
+
 ## 🚀 Advanced Workflows
 
 ### 🖼 Image-to-Listing Workflow
